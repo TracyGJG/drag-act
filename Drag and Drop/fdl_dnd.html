@@ -1,62 +1,80 @@
 <!DOCTYPE html>
-<html><head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
-  <style>
-    div{
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+      body {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        justify-items: center;
+      }
+      div {
         height: 200px;
         width: 200px;
-        position relative;
+        position: relative;
+        font-size: 3em;
+        text-align: center;
+        align-content: center;
+      }
+      div.drop {
         color: white;
-    }
-    div.drop{
         background-color: red;
-    }
-    div.drag{
+      }
+      div.drag {
+        color: white;
         background-color: green;
-    }
-  </style>
-</head>
-<body>
-  <div class="drop">drop here</div>
-  <div class="drag" draggable="true">drag me</div>
+        border-radius: 50%;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="drop">drop here</div>
+    <div>Open the Console</div>
+    <div class="drag" draggable="true">drag me</div>
 
-  <script>
-    const domDrop = document.querySelector('.drop');
-    const domDrag = document.querySelector('.drag');
+    <script>
+      const domDrop = document.querySelector('.drop');
+      const domDrag = document.querySelector('.drag');
 
-    domDrop.addEventListener("drop", (evt) => {
-      evt.preventDefault();
-      evt.target.style.backgroundColor = 'blue';
-      var data = evt.dataTransfer.getData('text');
-      console.log(data);
-    });
+      domDrop.addEventListener('drop', (evt) => {
+        evt.preventDefault();
+        evt.target.style.backgroundColor = 'blue';
+        var data = evt.dataTransfer.getData('text');
+        console.log('drop', data);
+      });
 
-    domDrop.addEventListener("dragover", (evt) => {
-      evt.preventDefault();
-      evt.target.style.backgroundColor = 'cyan';
-    });
+      domDrop.addEventListener('dragover', (evt) => {
+        evt.preventDefault();
+        evt.target.style.backgroundColor = 'cyan';
+        console.log('dragover');
+      });
 
-    domDrop.addEventListener("dragenter", (evt) => {
-      evt.preventDefault();
-      evt.target.style.backgroundColor = 'cyan';
-    });
+      domDrop.addEventListener('dragenter', (evt) => {
+        evt.preventDefault();
+        evt.target.style.backgroundColor = 'cyan';
+        console.log('dragenter');
+      });
 
-    domDrop.addEventListener("dragleave", (evt) => {
-      evt.preventDefault();
-      evt.target.style.backgroundColor = 'red';
-    });
+      domDrop.addEventListener('dragleave', (evt) => {
+        evt.preventDefault();
+        evt.target.style.backgroundColor = 'red';
+        console.log('dragleave');
+      });
 
-    domDrag.addEventListener("dragstart", (evt) => {
-      evt.target.style.backgroundColor = 'black';
-      evt.dataTransfer.setData('text', 'Hello');
-    });
+      domDrag.addEventListener('dragstart', (evt) => {
+        evt.target.style.backgroundColor = 'orange';
+        evt.dataTransfer.setData('text', 'Hello');
+        console.log('dragstart', 'Hello');
+      });
 
-    domDrag.addEventListener("dragend", (evt) => {
-      evt.preventDefault();
-      domDrag.style.backgroundColor = 'green';
-    });
-  </script>
-</body>
+      domDrag.addEventListener('dragend', (evt) => {
+        evt.preventDefault();
+        domDrag.style.backgroundColor = 'green';
+        console.log('dragend');
+      });
+    </script>
+  </body>
 </html>
