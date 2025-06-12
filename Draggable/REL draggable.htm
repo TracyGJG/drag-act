@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        background-color: yellow;
+      }
+      div[data-drag] {
+        background-color: white;
+        position: relative;
+        border: 1px solid grey;
+        cursor: pointer;
+        display: inline;
+        padding: 5px 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class='draggable' data-drag=''>X</div>
+    <div class='draggable' data-drag=''>Y</div>
+
+    <script>
+      window.onload = function() {
+        var startX = 0, startY = 0, x = 0, y = 0;
+        var bdy = document.body;
+        var upOnly = false;
+
+        bdy.onmousedown = function() {
+          if (upOnly && document.dragging) {
+            delete document.dragging;
+          }
+          else {
+            var subject = event.srcElement;
+            if (""===subject.getAttribute("data-drag")) {
+              document.dragging = subject;
+              x = (subject.style.left)? pareseInt(subject.style.left,10): 0;
+              y = (subject.style.top)? pareseInt(subject.style.top,10): 0;
+              startX = event.pageX - x;
+              startY = event.pageY - y;
+            }
+          }
+          event.cancelBubble = true;
+          return false;
+        };
+
+        if (!upOnly) {
+          bdy.onmouseup = function() {
+            delete document.dragging;
+          };
+        }
+
+        bdy.onmousemove = function() {
+          var subject = document.dragging;
+          if (subject) {
+            y = event.clientY - startY;
+            x = event.clientX - startX;
+            subject.style.top = y +"px";
+            subject.style.left = x +"px";
+          }
+        };
+      };
+    </script>
+  </body>
+</html>

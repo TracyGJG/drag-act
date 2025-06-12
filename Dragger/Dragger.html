@@ -1,0 +1,248 @@
+<!doctype HTML>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=EDGE"/>
+		<meta name="application-name" content="Dragger"/>
+		<meta name="description" content="An Experiment in dragging."/>
+		<meta name="author" content="Mr Tracy-Gregory J Gilmore"/>
+		<title>Dragger Experiment</title>
+
+		<style type='text/css'>
+			html, body {
+				overflow: hidden;
+				width: 100%;
+				height: 100%;
+				min-width: 1100px;
+				min-height: 800px;
+			}
+			body {
+				position: absolute;
+				background-color: #BCD;
+				margin: 0px;
+			}
+			body * {
+				box-sizing: border-box;
+				font-family: Arial, Helvetica, sans-serif;
+			}
+
+			main {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				height: 604px;
+				width: 804px;
+				background-color: white;
+				border: 2px solid grey;
+				cursor: crosshair;
+				overflow: hidden;
+			}
+
+			section.readout {
+				position: absolute;
+				top: 10px;
+				left: 10px;
+				height: 400px;
+				width: 200px;
+				background-color: white;
+			}
+
+			section.readout table {
+				width: 100%;
+				height: 100%;
+			}
+
+			td {
+				text-align: center;
+			}
+
+			#dragZone div {
+				font-size: 2pt;
+				padding: 0;
+				margin: 0;
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+
+			div.dot {
+				background-image: url(dots.png);
+				background-repeat: no-repeat;
+			}
+
+			.div1 {
+				background-color: red;
+				width: 18px;
+				height: 18px;
+				background-position: left bottom;
+			}
+
+			.div2 {
+				background-color: orange;
+				width: 16px;
+				height: 16px;
+				background-position: -18px bottom;
+			}
+
+			.div3 {
+				background-color: yellow;
+				width: 14px;
+				height: 14px;
+				background-position: -34px bottom;
+			}
+
+			.div4 {
+				background-color: lime;
+				width: 12px;
+				height: 12px;
+				background-position: -48px bottom;
+			}
+
+			.div5 {
+				background-color: blue;
+				width: 10px;
+				height: 10px;
+				background-position: -60px bottom;
+			}
+
+			.div6 {
+				background-color: purple;
+				width: 8px;
+				height: 8px;
+				background-position: -70px bottom;
+			}
+
+			#divMask {
+				width: 100%;
+				height: 100%;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+
+	<body>
+		<section class='readout'>
+			<table border='1'>
+				<thead>
+					<tr><td id='tdState'></td><th>X</th><th>Y</th></tr>
+					<tr id='trCursor'><th>Cursor</th><td></td><td></td></tr>
+					<tr><th>Params</th>
+						<td><div id='divDist' contentEditable='true'>24</div></td>
+						<td><div id='divFact' contentEditable='true'>0.6</div></td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr><th>1</th><td>0</td><td>0</td></tr>
+					<tr><th>2</th><td></td><td></td></tr>
+					<tr><th>3</th><td></td><td></td></tr>
+					<tr><th>4</th><td></td><td></td></tr>
+					<tr><th>5</th><td></td><td></td></tr>
+					<tr><th>6</th><td></td><td></td></tr>
+				</tbody>
+			</table>
+		</section>
+		<main id='dragZone'>
+			<div class='div1 dot'></div>
+			<div class='div2 dot'></div>
+			<div class='div3 dot'></div>
+			<div class='div4 dot'></div>
+			<div class='div5 dot'></div>
+			<div class='div6 dot'></div>
+			<div id='divMask'></div>
+		</main>
+
+		<script type='text/javascript' src='CoordUtils.js'></script>
+		<script type='text/javascript'>
+			"use strict";
+
+			var randDist = function() {
+				var objDragZone = document.getElementById("dragZone");
+				var arrDivs = objDragZone.getElementsByTagName('div');
+				var tabDragPoints = document.getElementsByTagName("TBODY")[0].getElementsByTagName("TR");
+				var numDivs = 0;
+
+				for (numDivs=0; numDivs<6; numDivs++) {
+					tabDragPoints[numDivs].childNodes[1].innerText = Math.round(800* Math.random());
+					tabDragPoints[numDivs].childNodes[2].innerText = Math.round(600* Math.random());
+					arrDivs[numDivs].style.left = (parseInt(tabDragPoints[numDivs].childNodes[1].innerText,10) -9 + numDivs)+"px";
+					arrDivs[numDivs].style.top = (parseInt(tabDragPoints[numDivs].childNodes[2].innerText,10) -9 + numDivs)+"px";
+				}
+			};
+
+			window.onload = function() {
+				var objDragZone = document.getElementById("dragZone");
+				var arrDivs = objDragZone.getElementsByTagName('div');
+				var objDragMask = document.getElementById("divMask");
+				var objDragState = document.getElementById("tdState");
+				var tabDragPoints = document.getElementsByTagName("TBODY")[0].getElementsByTagName("TR");
+				var objCursor = document.getElementById("trCursor");
+
+				randDist();
+				objCursor.onclick = randDist;
+
+				objDragMask.onmouseleave = function() {
+					objDragState.innerText = "False";
+				};
+
+				objDragMask.onmouseenter = function() {
+					objDragState.innerText = "True";
+				};
+
+				objDragMask.onmousemove = function() {
+					var numDivs = 0;
+					objCursor.childNodes[1].innerText = event.offsetX;
+					objCursor.childNodes[2].innerText = event.offsetY;
+				};
+
+				window.setInterval( function() {
+					if (objDragState.innerText == "True") {
+						var numDivs = 0;
+						var numDist = parseInt(document.getElementById("divDist").innerText,10);
+						var numFact = Number(document.getElementById("divFact").innerText);
+						var objStart = {x:0, y:0};
+						var objEnd = {x:0, y:0};
+						var numMove;
+
+					// Cursor -> Start
+						objStart.x = parseInt(objCursor.childNodes[1].innerText,10);
+						objStart.y = parseInt(objCursor.childNodes[2].innerText,10);
+
+					// Start -> Div1
+						tabDragPoints[numDivs].childNodes[1].innerText = objStart.x;
+						tabDragPoints[numDivs].childNodes[2].innerText = objStart.y;
+
+						for (numDivs=1; numDivs<6; numDivs++) {
+
+						// DivN -> End
+							objEnd.x = parseInt(tabDragPoints[numDivs].childNodes[1].innerText,10);
+							objEnd.y = parseInt(tabDragPoints[numDivs].childNodes[2].innerText,10);
+
+						// Distance -> Move
+							numMove = CoordUtils.getDistance( objStart, objEnd)* numFact;
+							numMove = (numMove < numDist)? numDist: numMove;
+
+						// New -> End
+							objEnd = CoordUtils.getRelativeLocation( objStart,
+								numMove, CoordUtils.getBearing( objStart, objEnd)
+							);
+
+						// End -> DivN
+							tabDragPoints[numDivs].childNodes[1].innerText = Math.round(objEnd.x);
+							tabDragPoints[numDivs].childNodes[2].innerText = Math.round(objEnd.y);
+
+						// End -> Start
+							objStart.x = objEnd.x;
+							objStart.y = objEnd.y;
+						}
+
+					// Update Divs
+						for (numDivs=0; numDivs<6; numDivs++) {
+							arrDivs[numDivs].style.left = (parseInt(tabDragPoints[numDivs].childNodes[1].innerText,10) -9 + numDivs)+"px";
+							arrDivs[numDivs].style.top = (parseInt(tabDragPoints[numDivs].childNodes[2].innerText,10) -9 + numDivs)+"px";
+						}
+					}
+				},100);
+			};
+		</script>
+	</body>
+</html>
